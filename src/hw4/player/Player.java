@@ -1,6 +1,7 @@
 package hw4.player;
 
 import hw4.maze.Cell;
+import hw4.maze.Row;
 import java.util.Objects;
 
 /**
@@ -8,6 +9,7 @@ import java.util.Objects;
  */
 public class Player {
     private Cell currentCell;
+    private Row currentRow;
 
     /**
      * Constructs a Player at a specific cell.
@@ -15,10 +17,25 @@ public class Player {
      */
     public Player(Cell cell) {
         this.currentCell = Objects.requireNonNull(cell);
+        this.currentRow = null; // unknown unless explicitly provided
+    }
+
+    /**
+     * Compatibility constructor with Row and Cell.
+     * @param row  the Row where the player starts
+     * @param cell the Cell within that row
+     */
+    public Player(Row row, Cell cell) {
+        this.currentCell = Objects.requireNonNull(cell);
+        this.currentRow = Objects.requireNonNull(row);
     }
 
     public Cell getCurrentCell() {
         return currentCell;
+    }
+
+    public Row getCurrentRow() {
+        return currentRow;
     }
 
     /**
@@ -31,6 +48,6 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player [currentCell=" + currentCell + "]";
+        return "Player [currentCell=" + currentCell + ", currentRow=" + currentRow + "]";
     }
 }
