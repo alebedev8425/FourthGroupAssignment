@@ -1,5 +1,7 @@
 package hw4.maze;
-
+/**
+ * Testing the Cell to make sure it functions properly 
+ */
 public class MazeTest {
 
 	public static void main(String[] args) {
