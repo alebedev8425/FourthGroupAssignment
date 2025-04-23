@@ -23,6 +23,31 @@ private ComponentType type;
         this.type = type;
     }
 
+  /**
+   * getter for CellComponent 
+   * @return type of CellComponent 
+   */
+    public ComponentType getType() {
+        return type;
+    }
+
+    /**
+     * sets type for CellComponent
+     * @param type of new component 
+     */
+    public void setType(ComponentType type) {
+        this.type = type;
+    }
+    
+	/**
+	 * toString() method for the component type 
+	 * @returns component as a string 
+	 */
+    @Override
+    public String toString() {
+        return type.toString();
+    }
+	
 
 
 }
