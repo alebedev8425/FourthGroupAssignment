@@ -71,26 +71,114 @@ public class Game {
 
   
     public Grid createRandomGrid(int size) {
-        if (size < minimumSize || size % 2 == 0) {
-            return null;
+    	if (size < minimumSize || size > 7) return null;
+
+        Random rand = new Random();
+        // arrays to hold each side
+        CellComponents[][] left  = new CellComponents[size][size];
+        CellComponents[][] right = new CellComponents[size][size];
+        CellComponents[][] up    = new CellComponents[size][size];
+        CellComponents[][] down  = new CellComponents[size][size];
+
+        int exitRow = 0;
+
+        // 2) FIRST PASS: mirror from neighbors, random elsewhere
+        for (int i = 0; i < size; i++) {
+          for (int j = 0; j < size; j++) {
+            // LEFT
+            if (j == 0) {
+              left[i][j] = (i == exitRow
+                            ? CellComponents.EXIT
+                            : CellComponents.WALL);
+            } else {
+              left[i][j] = right[i][j-1];
+            }
+            // UP
+            if (i == 0) {
+              up[i][j] = CellComponents.WALL;
+            } else {
+              up[i][j] = down[i-1][j];
+            }
+            // RIGHT (random except last column)
+            right[i][j] = (j == size-1
+                           ? CellComponents.WALL
+                           : (rand.nextBoolean()
+                              ? CellComponents.APERTURE
+                              : CellComponents.WALL));
+            // DOWN (random except last row)
+            down[i][j] = (i == size-1
+                          ? CellComponents.WALL
+                          : (rand.nextBoolean()
+                             ? CellComponents.APERTURE
+                             : CellComponents.WALL));
+          }
         }
+
+        // 3) CARVE a guaranteed corridor from start→exit (*never* overwritten)
+        int sr = size - 1, sc = size - 1;
+        // horizontal corridor to column 0
+        for (int j = sc; j > 0; j--) {
+          left[sr][j]      = CellComponents.APERTURE;
+          right[sr][j-1]   = CellComponents.APERTURE;
+        }
+        // vertical corridor up or down to exitRow
+        if (exitRow < sr) {
+          for (int i = sr; i > exitRow; i--) {
+            up[i][0]       = CellComponents.APERTURE;
+            down[i-1][0]   = CellComponents.APERTURE;
+          }
+        } else {
+          for (int i = sr; i < exitRow; i++) {
+            down[i][0]     = CellComponents.APERTURE;
+            up[i+1][0]     = CellComponents.APERTURE;
+          }
+        }
+
+        // 4) SECOND PASS: open at least one side on *every* other cell
+        for (int i = 0; i < size; i++) {
+          for (int j = 0; j < size; j++) {
+            boolean hasA = left[i][j]==CellComponents.APERTURE
+                        || right[i][j]==CellComponents.APERTURE
+                        || up[i][j]==CellComponents.APERTURE
+                        || down[i][j]==CellComponents.APERTURE;
+
+            if (!hasA) {
+              List<String> opts = new ArrayList<>();
+              if (j>0)        opts.add("L");
+              if (j<size-1)   opts.add("R");
+              if (i>0)        opts.add("U");
+              if (i<size-1)   opts.add("D");
+              String pick = opts.get(rand.nextInt(opts.size()));
+
+              switch (pick) {
+                case "L" -> { left[i][j] = CellComponents.APERTURE;
+                             right[i][j-1] = CellComponents.APERTURE; }
+                case "R" -> { right[i][j] = CellComponents.APERTURE;
+                             left[i][j+1] = CellComponents.APERTURE; }
+                case "U" -> { up[i][j] = CellComponents.APERTURE;
+                             down[i-1][j] = CellComponents.APERTURE; }
+                default  -> { down[i][j] = CellComponents.APERTURE;
+                             up[i+1][j]   = CellComponents.APERTURE; }
+              }
+            }
+          }
+        }
+
+        // 5) Build the actual Grid
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            List<Cell> cells = new ArrayList<>();
-            for (int j = 0; j < size; j++) {
-                // start with all sides = WALL
-                cells.add(new Cell(
-                    CellComponents.WALL,
-                    CellComponents.WALL,
-                    CellComponents.WALL,
-                    CellComponents.WALL
-                ));
-            }
-            rows.add(new Row(new ArrayList<>(cells)));
+          ArrayList<Cell> crow = new ArrayList<>();
+          for (int j = 0; j < size; j++) {
+            crow.add(new Cell(
+              left[i][j],
+              right[i][j],
+              up[i][j],
+              down[i][j]
+            ));
+          }
+          rows.add(new Row(crow));
         }
-        int exitRow = new Random().nextInt(size);
-        rows.get(exitRow).getCells().get(0).setLeft(CellComponents.EXIT);
-        return new Grid(new ArrayList<>(rows));
+        return new Grid(rows);
     }
 
     private Cell findNeighbor(Player player, Movement move) {
@@ -131,7 +219,7 @@ public class Game {
 
     	    return rows.get(r).getCells().get(c);
     }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Game [grid=");
@@ -156,4 +244,5 @@ public class Game {
         sb.append("]]").append("]");
         return sb.toString();
     }
+
 }
