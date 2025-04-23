@@ -107,11 +107,6 @@ public class Cell {
 		 */
 	    @Override
 	    public String toString() {
-	        return "Cell {\n" +
-	               "  Up: " + up + "\n" +
-	               "  Down: " + down + "\n" +
-	               "  Left: " + left + "\n" +
-	               "  Right: " + right + "\n" +
-	               "}";
+	        return "Cell [left=" + left + ", right=" + right + ", up=" + up + ", down=" + down + "]";
 	    }
 }
