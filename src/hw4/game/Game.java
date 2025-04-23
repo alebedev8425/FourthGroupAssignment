@@ -11,31 +11,56 @@ import hw4.maze.Row;
 import hw4.player.Movement;
 import hw4.player.Player;
 
+/**
+ * game class that handles player movement and grid generation
+ */
 public class Game {
+	
     private Grid grid;
     private final int minimumSize;
 
-   
+   /**
+    * Constructor for the grid 
+    * @param grid
+    */
     public Game(Grid grid) {
         this.grid = grid;
         this.minimumSize = 1;
     }
 
- 
+ /**
+  * generates grid of given size and up 
+  * @param Size
+  */
     public Game(int Size) {
         this.grid = null;
         this.minimumSize = Size;
     }
 
+    /**
+     * 	Returns the current grid 
+     * @return grid 
+     */
     public Grid getGrid() {
         return grid;
     }
 
+    
+    /**
+     * Sets the current grid 
+     * @param grid
+     */
     public void setGrid(Grid grid) {
         this.grid = grid;
     }
 
  
+    /**
+     * 
+     * @param mv
+     * @param player
+     * @return boolean... True if agent successfully moves, false if the move fails
+     */
     public boolean play(Movement mv, Player player) {
         if (mv == null || player == null || grid == null) {
             return false;
@@ -50,13 +75,13 @@ public class Game {
             default:    return false;
         }
 
-        // special case: exiting left
+        // special case if exiting from left 
         if (mv == Movement.LEFT && side == CellComponents.EXIT) {
             System.out.println("Player has exited the maze!");
             return true;
         }
 
-        // if there's no neighbor (boundary), fail
+        // fails if there is  no neighbor 
         Cell nbr = findNeighbor(player, mv);
         if (nbr == null) return false;
 
@@ -69,12 +94,16 @@ public class Game {
         return false;
     }
 
-  
+  /**
+   * Generate a valid random grid of given size. 
+   * @param size
+   * @return grid 
+   */
     public Grid createRandomGrid(int size) {
     	if (size < minimumSize || size > 7) return null;
 
         Random rand = new Random();
-        // arrays to hold each side
+        
         CellComponents[][] left  = new CellComponents[size][size];
         CellComponents[][] right = new CellComponents[size][size];
         CellComponents[][] up    = new CellComponents[size][size];
@@ -82,7 +111,7 @@ public class Game {
 
         int exitRow = 0;
 
-        // 2) FIRST PASS: mirror from neighbors, random elsewhere
+        // Randomizing walls and mirror adjacent cells
         for (int i = 0; i < size; i++) {
           for (int j = 0; j < size; j++) {
             // LEFT
@@ -105,6 +134,8 @@ public class Game {
                            : (rand.nextBoolean()
                               ? CellComponents.APERTURE
                               : CellComponents.WALL));
+            
+            
             // DOWN (random except last row)
             down[i][j] = (i == size-1
                           ? CellComponents.WALL
@@ -114,19 +145,22 @@ public class Game {
           }
         }
 
-        // 3) CARVE a guaranteed corridor from start→exit (*never* overwritten)
+        //making sure there is a guaranteed escape route from start to exit 
         int sr = size - 1, sc = size - 1;
+        
         // horizontal corridor to column 0
         for (int j = sc; j > 0; j--) {
           left[sr][j]      = CellComponents.APERTURE;
           right[sr][j-1]   = CellComponents.APERTURE;
         }
+        
         // vertical corridor up or down to exitRow
         if (exitRow < sr) {
           for (int i = sr; i > exitRow; i--) {
             up[i][0]       = CellComponents.APERTURE;
             down[i-1][0]   = CellComponents.APERTURE;
           }
+          
         } else {
           for (int i = sr; i < exitRow; i++) {
             down[i][0]     = CellComponents.APERTURE;
@@ -134,7 +168,7 @@ public class Game {
           }
         }
 
-        // 4) SECOND PASS: open at least one side on *every* other cell
+        //open at least one side on every other cell
         for (int i = 0; i < size; i++) {
           for (int j = 0; j < size; j++) {
             boolean hasA = left[i][j]==CellComponents.APERTURE
@@ -164,7 +198,8 @@ public class Game {
           }
         }
 
-        // 5) Build the actual Grid
+        //Build actual grid 
+        
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < size; i++) {
           ArrayList<Cell> crow = new ArrayList<>();
@@ -181,6 +216,12 @@ public class Game {
         return new Grid(rows);
     }
 
+    /**
+     * Finds the neighboring cell 
+     * @param player
+     * @param move
+     * @return Cell (neighboring cell) otherwise NULL
+     */
     private Cell findNeighbor(Player player, Movement move) {
     	   List<Row> rows = grid.getRows();
     	    int rowFound = -1, columnFound = -1;
@@ -205,6 +246,7 @@ public class Game {
 
     	    int r = rowFound;
     	    int c = columnFound;
+    	    
     	    switch (move) {
     	        case UP:    r--; break;
     	        case DOWN:  r++; break;
@@ -219,12 +261,16 @@ public class Game {
 
     	    return rows.get(r).getCells().get(c);
     }
-    
+    /**
+     * toString method() 
+     * @return a string representing the grid. 
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Game [grid=");
         sb.append("Grid [rows=[");
         List<Row> rows = grid.getRows();
+        
         for (int i = 0; i < rows.size(); i++) {
             Row row = rows.get(i);
             sb.append("Row [cells=[");
@@ -241,6 +287,7 @@ public class Game {
             sb.append("]]");
             if (i < rows.size() - 1) sb.append(", ");
         }
+        
         sb.append("]]").append("]");
         return sb.toString();
     }
