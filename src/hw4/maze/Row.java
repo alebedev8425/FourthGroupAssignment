@@ -1,21 +1,18 @@
 package hw4.maze;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Row {
-ArrayList<Cell> cells; 
+private ArrayList<Cell> cells; 
 	
 	
-	/*
-	 * Row constructor 
-	 */
-	public Row(ArrayList<Cell> cells)  {
-		this.cells = cells; 
+	
+	public Row(ArrayList<Cell> cells2) {
+		this.cells = Objects.requireNonNull(cells2); 
 	}
-	/*
-	 * 
-	 */
-	
+
 	public ArrayList<Cell> getCells()  {
 		return cells; 
 	}
