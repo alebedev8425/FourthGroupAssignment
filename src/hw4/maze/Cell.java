@@ -21,7 +21,7 @@ public class Cell {
 	public CellComponents down; 
 	
 	/**
-	 * Constructor for Cell all with there respective sides
+	 * constructor for Cell all with there respective sides
 	 * @param up  
 	 * @param down  
 	 * @param left 
@@ -100,7 +100,7 @@ public class Cell {
 	    
 		/**
 		 * returns details of cells components 
-		 * @return string detailing each component of a cells direction
+		 * @return string detailing each component of cells direction
 		 */
 	    @Override
 	    public String toString() {

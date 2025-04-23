@@ -13,14 +13,28 @@ public class Grid {
     public Grid(List<Row> rows) {
         this.rows = Objects.requireNonNull(rows);
     }
+    
+    /**
+     * get rows functionality
+     * @return returns rows of grid
+     */
 
 	public List<Row> getRows() {
 		return rows;
 	}
+	
+	/**
+	 * set rows functionality
+	 * @param rows - a list of rows
+	 */
 
 	public void setRows(List<Row> rows) {
 		this.rows = rows;
 	}
+	
+	/**
+	 * toString function for the grid
+	 */
 
 	@Override
 	public String toString() {

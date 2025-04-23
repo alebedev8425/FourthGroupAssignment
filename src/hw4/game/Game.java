@@ -111,7 +111,7 @@ public class Game {
 
         int exitRow = 0;
 
-        // Randomizing walls and mirror adjacent cells
+        // this is randomizing walls and mirror adjacent cells
         for (int i = 0; i < size; i++) {
           for (int j = 0; j < size; j++) {
             // LEFT
@@ -136,7 +136,7 @@ public class Game {
                               : CellComponents.WALL));
             
             
-            // DOWN (random except last row)
+            // down is randomm except last row
             down[i][j] = (i == size-1
                           ? CellComponents.WALL
                           : (rand.nextBoolean()
@@ -148,13 +148,13 @@ public class Game {
         //making sure there is a guaranteed escape route from start to exit 
         int sr = size - 1, sc = size - 1;
         
-        // horizontal corridor to column 0
+        //horizontal corridor to column 0
         for (int j = sc; j > 0; j--) {
           left[sr][j]      = CellComponents.APERTURE;
           right[sr][j-1]   = CellComponents.APERTURE;
         }
         
-        // vertical corridor up or down to exitRow
+        // vertical corridor up or down to exit row
         if (exitRow < sr) {
           for (int i = sr; i > exitRow; i--) {
             up[i][0]       = CellComponents.APERTURE;
@@ -198,7 +198,7 @@ public class Game {
           }
         }
 
-        //Build actual grid 
+        //build actual grid 
         
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < size; i++) {
