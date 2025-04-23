@@ -13,18 +13,18 @@ import hw4.player.Player;
 
 public class Game {
     private Grid grid;
-    private final int minSize;
+    private final int minimumSize;
 
    
     public Game(Grid grid) {
         this.grid = grid;
-        this.minSize = 1;
+        this.minimumSize = 1;
     }
 
  
-    public Game(int minSize) {
+    public Game(int Size) {
         this.grid = null;
-        this.minSize = minSize;
+        this.minimumSize = Size;
     }
 
     public Grid getGrid() {
@@ -71,7 +71,7 @@ public class Game {
 
   
     public Grid createRandomGrid(int size) {
-        if (size < minSize || size % 2 == 0) {
+        if (size < minimumSize || size % 2 == 0) {
             return null;
         }
         List<Row> rows = new ArrayList<>();
@@ -93,37 +93,43 @@ public class Game {
         return new Grid(new ArrayList<>(rows));
     }
 
-    private Cell findNeighbor(Player player, Movement mv) {
-        List<Row> rows = grid.getRows();
-        // find the row index
-        Row crow = player.getCurrentRow();
-        int r = rows.indexOf(crow);
-        if (r == -1) {
-            // fallback: scan for the cell
-            for (int i = 0; i < rows.size(); i++) {
-                if (rows.get(i).getCells().contains(player.getCurrentCell())) {
-                    r = i;
-                    crow = rows.get(i);
-                    break;
-                }
-            }
-        }
-        if (r < 0) return null;
+    private Cell findNeighbor(Player player, Movement move) {
+    	   List<Row> rows = grid.getRows();
+    	    int rowFound = -1, columnFound = -1;
 
-        List<Cell> cc = crow.getCells();
-        int c = cc.indexOf(player.getCurrentCell());
-        if (c < 0) return null;
+    	    for (int r = 0; r < rows.size(); r++) {
+    	        List<Cell> cells = rows.get(r).getCells();
+    	        for (int c = 0; c < cells.size(); c++) {
+    	            if (cells.get(c) == player.getCurrentCell()) {
+    	                rowFound = r;
+    	                columnFound = c;
+    	                break;
+    	            }
+    	        }
+    	        if (rowFound != -1) {
+    	            break;
+    	        }
+    	    }
 
-        switch (mv) {
-            case UP:    r--; break;
-            case DOWN:  r++; break;
-            case LEFT:  c--; break;
-            case RIGHT: c++; break;
-        }
-        if (r < 0 || r >= rows.size() || c < 0 || c >= rows.get(r).getCells().size()) {
-            return null;
-        }
-        return rows.get(r).getCells().get(c);
+    	    if (rowFound == -1) {
+    	        return null;
+    	    }
+
+    	    int r = rowFound;
+    	    int c = columnFound;
+    	    switch (move) {
+    	        case UP:    r--; break;
+    	        case DOWN:  r++; break;
+    	        case LEFT:  c--; break;
+    	        case RIGHT: c++; break;
+    	    }
+
+    	    if (r < 0 || r >= rows.size() ||
+    	        c < 0 || c >= rows.get(r).getCells().size()) {
+    	        return null;
+    	    }
+
+    	    return rows.get(r).getCells().get(c);
     }
 
     @Override

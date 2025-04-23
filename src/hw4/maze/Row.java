@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Row {
-private ArrayList<Cell> cells; 
+private List<Cell> cells; 
 	
 	
 	
@@ -14,7 +14,7 @@ private ArrayList<Cell> cells;
 	}
 
 	public ArrayList<Cell> getCells()  {
-		return cells; 
+		return (ArrayList<Cell>) cells; 
 	}
 	
 	 public void setCells(ArrayList<Cell> cells) {
@@ -23,6 +23,6 @@ private ArrayList<Cell> cells;
 	 
 	 @Override
 	    public String toString() {
-	        return "Row [cells=" + cells + "]";
+	        return "Row [cells=" + cells.toString() + "]";
 	    }
 }
