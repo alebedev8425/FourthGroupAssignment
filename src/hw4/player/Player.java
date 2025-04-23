@@ -11,14 +11,6 @@ public class Player {
     private Cell currentCell;
     private Row currentRow;
 
-    /**
-     * Constructs a Player at a specific cell.
-     * @param cell the Cell where the player starts (must not be null)
-     */
-    public Player(Cell cell) {
-        this.currentCell = Objects.requireNonNull(cell);
-        this.currentRow = null; // unknown unless explicitly provided
-    }
 
     /**
      * Compatibility constructor with Row and Cell.
