@@ -1,7 +1,8 @@
 package hw4.maze;
 
-/*
- * defining component types 
+/**
+ * defines component types 
+ * WALL, APERTURE, and EXIT  
  */
 public enum ComponentType {
 	WALL,APERTURE,EXIT
